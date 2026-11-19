@@ -5,7 +5,7 @@ A headless, network-wide DNS ad blocker and telemetry filter deployed on a **Ras
 ## Hardware & Software Stack
 * **Single-Board Computer:** Raspberry Pi 2 Model B (900MHz Quad-Core ARMv7, 1GB RAM)
 * **Power Supply:** Apple A1401 12W USB-A Power Adapter (5.2V / 2.4A) selected to prevent undervoltage during continuous 24/7 operation
-* **Network Interface:** Wired RJ45 Ethernet (`eth0`) connected directly to the home router
+* **Network Interface:** Wired RJ45 Ethernet (`eth0`) via Cat6e UTP cable connected directly to the home router
 * **Operating System:** Raspberry Pi OS Lite (32-bit) configured for headless SSH administration
 * **DNS & Filtering Engine:** Pi-hole (`pihole-FTL`) with the OISD Big blocklist (`229,546` blocked domains)
 
