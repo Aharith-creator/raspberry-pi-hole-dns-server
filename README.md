@@ -1,28 +1,36 @@
 # Network-Wide DNS Sinkhole with Pi-hole
 
-A headless, network-wide DNS ad blocker and tracker filter deployed on a **Raspberry Pi 2 Model B** running **Raspberry Pi OS Lite (32-bit)**.
+A headless, network-wide DNS ad blocker and telemetry filter deployed on a **Raspberry Pi 2 Model B** running **Raspberry Pi OS Lite (32-bit)**.
 
 ## Hardware & Software Stack
-* **Hardware:** Raspberry Pi 2 Model B (900MHz Quad-Core ARMv7, 1GB RAM)
-* **Power Supply:** Dedicated 5V 2.5A Micro-USB power adapter (preventing undervoltage during 24/7 operation)
-* **Network Connection:** Wired RJ45 Ethernet to home router
-* **Operating System:** Raspberry Pi OS Lite (32-bit)
-* **Software:** Pi-hole DNS Sinkhole, OpenSSH
+* **Single-Board Computer:** Raspberry Pi 2 Model B (900MHz Quad-Core ARMv7, 1GB RAM)
+* **Power Supply:** Apple A1401 12W USB-A Power Adapter (5.2V / 2.4A) selected to prevent undervoltage during continuous 24/7 operation
+* **Network Interface:** Wired RJ45 Ethernet (`eth0`) connected directly to the home router
+* **Operating System:** Raspberry Pi OS Lite (32-bit) configured for headless SSH administration
+* **DNS & Filtering Engine:** Pi-hole (`pihole-FTL`) with the OISD Big blocklist (`229,546` blocked domains)
 
 ## Network Architecture
 ```text
-[Client Devices] ---> [Home Router (DHCP/DNS)] ---> [Raspberry Pi 2 (Pi-hole)] ---> [Upstream DNS (1.1.1.1)]
+[Client Device (Linux Laptop)] 
+        │  (DNS Queries via nmcli static DNS)
+        ▼
+[Raspberry Pi 2 Model B — Pi-hole] 
+        ├──► Blocked Domains (229,546) ──► Sinkholed (0.0.0.0)
+        └──► Allowed Domains ──► [Upstream DNS Resolver] ──► [Internet]
 ```
 
-## Deployment Workflow
-1. **Storage Verification on Linux:** Used `lsblk`, `dmesg`, and `f3probe` to verify microSD card device paths and genuine flash storage capacity prior to flashing.
-2. **Headless OS Flashing:** Flashed Raspberry Pi OS Lite (32-bit) via Raspberry Pi Imager with SSH password authentication pre-configured.
-3. **Static IP & System Updates:** Reserved a static IP address for the Raspberry Pi in the router's DHCP table and updated system packages via SSH (`sudo apt update && sudo apt upgrade -y`).
-4. **Pi-hole Installation:** Installed Pi-hole via `curl -sSL https://pi-hole.net | bash` and configured Cloudflare (`1.1.1.1`) as the upstream DNS resolver.
-5. **Router DNS Cutover:** Pointed the router's primary DNS server to the Pi-hole's local static IP to filter ads and telemetry across all connected devices.
+## Implementation & Troubleshooting Log
+1. **Linux Storage & Hardware Verification:** Inspected block devices on a Linux workstation using `lsblk`, `watch -n 1 lsblk`, and `dmesg` to verify microSD card detection before flashing Raspberry Pi OS Lite (32-bit) with SSH enabled.
+2. **Power & Thermal Stability:** Evaluated USB power adapters against the Raspberry Pi 2's 4.75V–5.25V operating threshold and deployed a 5.2V / 2.4A regulated supply to eliminate voltage drop risks.
+3. **Headless Provisioning & DNS Diagnostics:** Connected over SSH, diagnosed initial `/etc/resolv.conf` DNS resolution issues during installation, and deployed Pi-hole.
+4. **Gravity Blocklist & Client Routing:** Configured the `big.oisd.nl` blocklist (`229,546` domains) via Gravity and routed client traffic using Linux NetworkManager (`nmcli`) while disabling IPv6 DNS fallback (`ipv6.method disabled`) to prevent DNS leaks.
+5. **Verification & Architectural Takeaways:** Verified domain sinkholing via the Pi-hole Query Log and `nslookup`, documenting key DNS-level boundaries such as encrypted DNS-over-HTTPS (DoH) and first-party streaming ads.
 
-## Key Skills Demonstrated
-* Linux CLI & Block-Device Diagnostics (`lsblk`, `dmesg`, `f3probe`)
-* Headless Server Provisioning & Remote Administration (SSH)
-* Network Protocols & Infrastructure (DNS, DHCP Reservations, Static IP Routing)
-* Technical Documentation & Version Control (Git, GitHub, Markdown)
+## Proof of Deployment
+* **Pi-hole Admin Dashboard:** `pihole-dashboard.png`
+* **Raspberry Pi 2 Hardware Setup:** `hardware-setup.jpg`
+
+## Skills Demonstrated
+* **Systems Administration:** Headless Linux server provisioning, SSH, `systemd`, `nmcli`, and storage diagnostics (`lsblk`, `dmesg`)
+* **Networking:** DNS sinkholing, DHCP/static IP routing, IPv4/IPv6 DNS leak prevention, and packet/query log analysis
+* **Documentation & Version Control:** Git CLI, GitHub repository management, and Markdown technical writing
