@@ -27,8 +27,12 @@ A headless, network-wide DNS ad blocker and telemetry filter deployed on a **Ras
 5. **Verification & Architectural Takeaways:** Verified domain sinkholing via the Pi-hole Query Log and `nslookup`, documenting key DNS-level boundaries such as encrypted DNS-over-HTTPS (DoH) and first-party streaming ads.
 
 ## Proof of Deployment
-* **Pi-hole Admin Dashboard:** `pihole-dashboard.png`
-* **Raspberry Pi 2 Hardware Setup:** `hardware-setup.jpg`
+
+### Pi-hole Admin Dashboard
+![Pi-hole Admin Dashboard](image.png)
+
+### Raspberry Pi 2 Hardware Setup
+![Raspberry Pi 2 Hardware Setup](IMG_0871.jpg)
 
 ## Skills Demonstrated
 * **Systems Administration:** Headless Linux server provisioning, SSH, `systemd`, `nmcli`, and storage diagnostics (`lsblk`, `dmesg`)
